@@ -84,6 +84,8 @@ fruits                           apple, banana, pear, \
                                  kiwi, mango
 """.strip()
 fruits_values = "apple, banana, pear, cantaloupe, watermelon, kiwi, mango"
+
+
 def test_java_examples():
     _test_deserialize(
         ("Truth = Beauty", [("Truth", "Beauty")]),
