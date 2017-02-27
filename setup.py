@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import distutils.core
 import os.path
+from setuptools import setup
 
 import jproperties
 
@@ -23,7 +23,7 @@ CLASSIFIERS = [
 	"Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-distutils.core.setup(
+setup(
 	name="jproperties",
 	py_modules=["jproperties"],
 	author=jproperties.__author__,
