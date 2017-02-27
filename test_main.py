@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys
 from collections import OrderedDict
 from io import StringIO
 import os
