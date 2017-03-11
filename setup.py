@@ -24,8 +24,8 @@ CLASSIFIERS = [
 ]
 
 setup(
-    name="jproperties",
-    py_modules=["jproperties"],
+    name="jproperties3",
+    py_modules=["jproperties3"],
     author=jproperties.__author__,
     author_email=jproperties.__email__,
     classifiers=CLASSIFIERS,
