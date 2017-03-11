@@ -2,7 +2,7 @@
 
 Please adhere to the coding style throughout the project.
 
-~~1. Always use tabs. [Here](https://leclan.ch/tabs) is a short explanation why tabs are preferred.~~
+1. ~~Always use tabs. [Here](https://leclan.ch/tabs) is a short explanation why tabs are preferred.~~
 2. Always use double quotes for strings, unless single quotes avoid unnecessary escapes.
 3. When in doubt, [PEP8](https://www.python.org/dev/peps/pep-0008/). Follow its naming conventions.
 4. Know when to make exceptions.
