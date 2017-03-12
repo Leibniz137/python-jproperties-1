@@ -6,7 +6,7 @@ from collections import OrderedDict
 from collections.abc import MutableMapping
 
 
-__version__ = "0.4"
+__version__ = "0.4.1"
 __author__ = "Jerome Leclanche"
 __email__ = "jerome@leclan.ch"
 
