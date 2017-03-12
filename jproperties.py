@@ -22,7 +22,7 @@ class Comment:
         self.sigil = sigil
 
     def __str__(self):
-        return "\n".join("%s %s" % (self.sigil, line) for line in self.value.split("\n"))
+        return "\n".join("%s %s" % (self.sigil, line) for line in self.value.split("\n"))   # noqa: E501
 
     def __repr__(self):
         return "<Comment: %r>" % (str(self))
@@ -32,7 +32,11 @@ class Property:
     DEFAULT_SEPARATOR = " = "
 
     def __init__(self, key, value, separator=DEFAULT_SEPARATOR):
-        self.key = key
+        self.key = key.encode("unicode_escape") \
+            .decode("utf-8") \
+            .replace(":", r"\:") \
+            .replace("=", r"\=") \
+            .replace(" ", r"\ ")
         self.value = value
         self.separator = separator
 
@@ -51,12 +55,13 @@ class Properties(MutableMapping):
     def __str__(self):
         ret = []
         for node in self.nodes:
-            if isinstance(node, Comment):
+            if hasattr(node, 'key'):
+                line = "{0.key}{0.separator}{0.value}".format(node)
+                ret.append(line)
+            elif hasattr(node, 'value'):
                 ret.append(str(node))
-            elif isinstance(node, EmptyNode):
-                ret.append("")
             else:
-                ret.append(self.escape_key(node.key) + node.separator + self.escape(node.value))
+                ret.append("")
         return "\n".join(ret)
 
     def __getitem__(self, key):
@@ -93,14 +98,6 @@ class Properties(MutableMapping):
     @staticmethod
     def escape(value):
         return value.encode("unicode_escape").decode("utf-8")
-
-    @staticmethod
-    def escape_key(value):
-        return value.encode("unicode_escape") \
-            .decode("utf-8") \
-            .replace(":", r"\:") \
-            .replace("=", r"\=") \
-            .replace(" ", r"\ ")
 
     @staticmethod
     def unescape(value):
