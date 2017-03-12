@@ -59,13 +59,12 @@ with open("out.properties", "w") as f:
 	f.write(str(p2))
 ```
 
-To read an existing properties file, use `Properties.load()` on an already-
-instanced Properties object.. That method expects a file-like object that
-supports the `readlines()` method.
+To read an existing properties file, create the instance using the `stream`
+keyword parameter
 
 ```python
 with open("out.properties", "r") as f:
-	p2.load(f)
+	p = Properties(stream=f)
 ```
 
 Note that comments and blank lines are loaded into the Properties object's
