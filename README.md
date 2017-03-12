@@ -7,23 +7,22 @@ A python library for parsing and handling Java .properties files.
 
 Installation
 ------------
-
-To build, run the following command:
-
 ```
- $ python setup.py build
+ $ pip install jproperties3
 ```
 
-To install, preferably into a virtual environment:
-
-```
- $ python setup.py install
-```
-
-To test:
+Test
+----
 
 ```
  $ python setup.py test
+```
+
+Build
+-----
+
+```
+ $ python setup.py build
 ```
 
 Usage
