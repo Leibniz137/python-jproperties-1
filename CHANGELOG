@@ -1,0 +1,2 @@
+0.4
+ - instantiate properties from a file via stream keyword parameter
