@@ -45,12 +45,18 @@ class Property(Node):
 
 
 class Properties(MutableMapping):
-    def __init__(self, defaults=None):
-        if defaults is not None:
+    def __init__(self, defaults=None, stream=None):
+        if stream and defaults:
+            raise ValueError(
+                "defaults and stream are mutually exclusive parameters")
+        if defaults:
             self._props = defaults.copy()
         else:
             self._props = OrderedDict()
         self.nodes = [Property(k, v) for k, v in self._props.items()]
+
+        if stream:
+            self.load(stream)
 
     def __str__(self):
         ret = []
