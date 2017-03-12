@@ -11,12 +11,12 @@ __author__ = "Jerome Leclanche"
 __email__ = "jerome@leclan.ch"
 
 
-class EmptyNode:
+class Node:
     def __repr__(self):
         return "<EmptyNode>"
 
 
-class Comment:
+class Comment(Node):
     def __init__(self, value, sigil="#"):
         self.value = value
         self.sigil = sigil
@@ -28,7 +28,7 @@ class Comment:
         return "<Comment: %r>" % (str(self))
 
 
-class Property:
+class Property(Node):
     DEFAULT_SEPARATOR = " = "
 
     def __init__(self, key, value, separator=DEFAULT_SEPARATOR):
@@ -206,7 +206,7 @@ class Properties(MutableMapping):
         for line in self._get_lines(stream):
             # Skip null lines
             if not line:
-                self.nodes.append(EmptyNode())
+                self.nodes.append(Node())
                 continue
 
             if line.startswith(("#", "!")):
