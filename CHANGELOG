@@ -1,2 +1,5 @@
 0.4
+0.4.1
+ - skip, bad builds
+0.4.2
  - instantiate properties from a file via stream keyword parameter
