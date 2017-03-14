@@ -25,7 +25,7 @@ class Comment(Node):
         return "\n".join("%s %s" % (self.sigil, line) for line in self.value.split("\n"))   # noqa: E501
 
     def __repr__(self):
-        return "<Comment: %r>" % (str(self))
+        return "<Comment: %r>" % str(self)
 
 
 class Property(Node):
