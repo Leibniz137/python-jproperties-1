@@ -10,8 +10,7 @@ from jproperties import Properties
 
 def _test_deserialize(*data):
     for s, items in data:
-        props = Properties()
-        props.load(StringIO(s))
+        props = Properties.load(StringIO(s))
         assert list(props.items()) == items
 
 
@@ -130,8 +129,7 @@ def test_space_in_key():
 
 def test_property_node_update():
     s = "key = value"
-    props = Properties()
-    props.load(StringIO(s))
+    props = Properties.load(StringIO(s))
     props["key"] = "another_value"
     assert str(props) == "key = another_value"
 
@@ -235,23 +233,42 @@ def test_str():
     ]
     d = OrderedDict(items)
     props = Properties(d)
-    props2 = Properties()
-    props2.load(StringIO(str(props)))
+    props2 = Properties.load(StringIO(str(props)))
     assert props == props2
 
 
-def test_save():
-    properties = """
-foo : bar
-bar : baz
-"""
-    p = Properties()
-    p2 = Properties()
-    p.load(StringIO(properties))
+@pytest.fixture
+def propstr():
+    yield """
+foo = bar
+bar = baz"""
+
+
+@pytest.fixture
+def propfile(propstr):
+    with NamedTemporaryFile(delete=False) as fp:
+        fp.write(propstr.encode('utf-8'))
+    with open(fp.name) as fp:
+        yield fp
+    os.remove(fp.name)
+
+
+def test_load_from_path(propfile, propstr):
+    properties = Properties.load(propfile.name)
+    assert str(properties) == propstr
+
+
+def test_load_from_file(propfile, propstr):
+    properties = Properties.load(propfile)
+    assert str(properties) == propstr
+
+
+def test_save(propstr):
+    p = Properties.load(StringIO(propstr))
     with NamedTemporaryFile(delete=False) as f:
         p.save(f.name)
     with open(f.name) as f:
-        p2.load(f)
+        p2 = Properties.load(f)
     os.remove(f.name)
     assert p == p2
 

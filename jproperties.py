@@ -4,9 +4,10 @@ Java .properties file parsing and handling
 """
 from collections import OrderedDict
 from collections.abc import MutableMapping
+from pathlib import Path
 
 
-__version__ = "0.4.2"
+__version__ = "0.5"
 __author__ = "Jerome Leclanche"
 __email__ = "jerome@leclan.ch"
 
@@ -45,18 +46,44 @@ class Property(Node):
 
 
 class Properties(MutableMapping):
-    def __init__(self, defaults=None, stream=None):
-        if stream and defaults:
-            raise ValueError(
-                "defaults and stream are mutually exclusive parameters")
-        if defaults:
-            self._props = defaults.copy()
-        else:
-            self._props = OrderedDict()
+    def __init__(self, keyvals=None):
+        self._props = (keyvals or OrderedDict()).copy()
         self.nodes = [Property(k, v) for k, v in self._props.items()]
 
-        if stream:
-            self.load(stream)
+    @classmethod
+    def load(cls, input_):
+        """takes a path or a file object as input"""
+        if hasattr(input_, 'readlines'):
+            lines = cls._get_lines(input_)
+        else:
+            path = Path(input_)
+            with path.open() as stream:
+                # list because _get_lines is a generator
+                # we want to read from the file while it's still open
+                lines = list(cls._get_lines(stream))
+
+        props = cls()
+        comment = []
+        for line in lines:
+            # Skip null lines
+            if not line:
+                props.nodes.append(Node())
+                continue
+            if line.startswith(("#", "!")):
+                # NOTE: Multiline comments with different sigils will be
+                # normalized on the last specified sigil
+                sigil = line[0]
+                comment.append(line[1:].strip())
+                continue
+            elif comment:
+                props.nodes.append(Comment("\n".join(comment), sigil))
+                comment = []
+
+            key, separator, value = cls._separate(line)
+            key = cls.unescape(key)
+            value = cls.unescape(value)
+            props[key] = value
+        return props
 
     def __str__(self):
         ret = []
@@ -71,7 +98,7 @@ class Properties(MutableMapping):
         return "\n".join(ret)
 
     def __getitem__(self, key):
-        return self._props.get(key, "")
+        return self._props[key]
     getProperty = __getitem__
 
     def __setitem__(self, key, value):
@@ -101,12 +128,12 @@ class Properties(MutableMapping):
     def __contains__(self, key):
         return key in self._props
 
-    @staticmethod
-    def escape(value):
+    @classmethod
+    def escape(cls, value):
         return value.encode("unicode_escape").decode("utf-8")
 
-    @staticmethod
-    def unescape(value):
+    @classmethod
+    def unescape(cls, value):
         ret = []
         backslash = False
         for c in value:
@@ -133,8 +160,8 @@ class Properties(MutableMapping):
         ret = "".join(ret).encode("utf-8").decode("unicode_escape")
         return ret
 
-    @staticmethod
-    def _get_lines(stream):
+    @classmethod
+    def _get_lines(cls, stream):
         def _strip_line(line):
             last = ""
             while line.endswith(("\n", "\r", " ")):
@@ -162,8 +189,8 @@ class Properties(MutableMapping):
             yield _strip_line("".join(buf))
             buf = []
 
-    @staticmethod
-    def _separate(line):
+    @classmethod
+    def _separate(cls, line):
         def getkey(s):
             ret = []
             escaping = False
@@ -206,31 +233,6 @@ class Properties(MutableMapping):
         idx += len(sep)
         value = getvalue(line[idx:])
         return key, sep, value
-
-    def load(self, stream):
-        comment = []
-        for line in self._get_lines(stream):
-            # Skip null lines
-            if not line:
-                self.nodes.append(Node())
-                continue
-
-            if line.startswith(("#", "!")):
-                # NOTE: Multiline comments with different sigils will be normalized on the
-                # last specified sigil
-                sigil = line[0]
-                comment.append(line[1:].strip())
-                continue
-            elif comment:
-                self.nodes.append(Comment("\n".join(comment), sigil))
-                comment = []
-
-            key, separator, value = self._separate(line)
-            key = self.unescape(key)
-            value = self.unescape(value)
-            self._props[key] = value
-            node = Property(key, value, separator)
-            self.nodes.append(node)
 
     def save(self, path):
         with open(path, 'w') as f:
