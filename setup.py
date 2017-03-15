@@ -29,7 +29,7 @@ setup(
     author_email=jproperties.__email__,
     classifiers=CLASSIFIERS,
     description="Python library for Java .properties file parsing",
-    download_url="https://github.com/translate/python-jproperties/tarball/master",
+    download_url="https://github.com/Leibniz137/python-jproperties3/tarball/master",
     long_description=README,
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
