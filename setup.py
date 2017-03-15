@@ -33,6 +33,6 @@ setup(
     long_description=README,
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
-    url="https://github.com/translate/python-jproperties",
+    url="https://github.com/Leibniz137/python-jproperties3",
     version=jproperties.__version__,
 )

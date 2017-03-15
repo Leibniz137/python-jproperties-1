@@ -7,7 +7,7 @@ from collections.abc import MutableMapping
 from pathlib import Path
 
 
-__version__ = "0.5"
+__version__ = "0.5.1"
 __author__ = "Jerome Leclanche"
 __email__ = "jerome@leclan.ch"
 
